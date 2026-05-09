@@ -3,7 +3,7 @@ import { Scene } from './Scene';
 
 // Configuration for your "Safe Zone" / Design resolution
 const DESIGN_WIDTH = 1920;
-const DESIGN_HEIGHT = 1080;
+const DESIGN_HEIGHT = 3000;
 
 const app = new PIXI.Application();
 
@@ -13,6 +13,7 @@ async function init()
         background: '#1099bb',
         resizeTo: window, // Automatically matches the browser window size
         antialias: true,
+        autoDensity: true,
         resolution: window.devicePixelRatio || 1,
     });
 
