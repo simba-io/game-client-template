@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>ArcadePro game shell (reference)</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+        background: #000;
+      }
+      #root {
+        position: fixed;
+        inset: 0;
+      }
+      #shell-error {
+        position: fixed;
+        inset: auto 12px 12px;
+        padding: 10px;
+        border-radius: 6px;
+        background: #b00020;
+        color: #fff;
+        font: 13px/1.4 system-ui, sans-serif;
+      }
+      #shell-error:empty {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <div id="shell-error"></div>
+    <script type="module" src="./shell.ts"></script>
+  </body>
+</html>
