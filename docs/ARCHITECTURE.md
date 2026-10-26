@@ -4,16 +4,20 @@
 > An identical copy lives at `docs/ARCHITECTURE.md` in every ArcadePro repo. If you change
 > it in one repo, make the same change in the others (or flag it to Cameron).
 >
-> Last updated: 2026-10-25. Owner: Cameron McKay (GitHub org `simba-io`).
+> Last updated: 2026-10-26. Owner: Cameron McKay (GitHub org `simba-io`).
 
 ---
 
 ## 1. What ArcadePro is
 
-ArcadePro is a **skill-based online arcade**, delivered as a **mobile app** (with web as a likely
-second target). Players get **free entry**. Each game has a **weekly competition**, and the top
-verified score each week wins a prize drop. Revenue comes from ads and brand sponsors, including
-branded sponsor games.
+ArcadePro is a **free-to-enter, skill-based online arcade** (business plan, 15 Oct 2026). It's live
+today as a mobile-first website (www.arcadepro.net), with a native mobile app planned. Each game
+runs a **weekly competition** that drops on **Tuesday 12:00 UK time**, and the top verified score
+wins a cash prize of **at least £10** per standard game. Players must be **18+ and live in England,
+Scotland or Wales**. Revenue comes from **an ad on game entry** (baseline) and **brand sponsorship**
+(the main channel): sponsored games are featured first, labelled, and carry bigger prizes. Winners
+are paid by instant bank transfer after verification. **There is never an entry fee, purchase or
+paywall.**
 
 Three properties drive almost every technical decision:
 
@@ -32,13 +36,13 @@ Three properties drive almost every technical decision:
 
 | Repo | Visibility | What it is | Status |
 |---|---|---|---|
-| `simba-io/arcadepro-game-sdk` | private | `@arcadepro/game-sdk`: the contract between platform, games and server (types, seeded RNG, replay, message protocol) | v0.1.0 tagged |
+| `simba-io/arcadepro-game-sdk` | private | `@arcadepro/game-sdk`: the contract between platform, games and server (types, seeded RNG, replay, message protocol, manifest, client helpers) | v0.2.0 tagged |
 | `simba-io/arcadepro-supabase` | private | Supabase backend: database migrations and the `submit-run` edge function | `submit-run` v1 deployed |
-| `simba-io/game-client-template` | public | Starting point for **every** ArcadePro game: PixiJS + Vite, wired to the SDK, Stub Tapper as the built-in example | Being adapted (see its `ADAPTATION_PLAN.md`) |
-| `simba-io/arcade-pro` | not created yet | The platform app: auth, dashboard, game menu, leaderboards, and the **game shell** that hosts games | Not started |
+| `simba-io/game-client-template` | public | Starting point for **every** ArcadePro game: PixiJS + Vite, wired to the SDK, Stub Tapper as the built-in example | Phases 0–8 done; 7.3 (Storage test) and 9 left |
+| `simba-io/arcade-pro-client` | private | The platform app (React + Vite, on GitHub Pages at www.arcadepro.net): auth, dashboard, game menu, leaderboards, drop timer, and the **game shell** that hosts games | Being refactored (see its `PLATFORM_PLAN.md`) |
 | `simba-io/<game>-client` | per game | One repo per game, created from `game-client-template` | e.g. `memory-match-client` (pre-ArcadePro, not adapted) |
 
-**Rule:** game code never lives in `arcade-pro`, and platform code never lives in a game repo.
+**Rule:** game code never lives in `arcade-pro-client`, and platform code never lives in a game repo.
 They meet only through the SDK contract.
 
 ---
@@ -46,11 +50,11 @@ They meet only through the SDK contract.
 ## 3. The big picture
 
 ```
-┌──────────────────────── Mobile app (arcade-pro) ─────────────────────────┐
+┌──────────────────────── App (arcade-pro-client) ─────────────────────────┐
 │  React UI: login · dashboard · game menu · leaderboards · results        │
 │                                                                           │
 │  ┌──── <iframe sandbox="allow-scripts" src="game-shell.html"> ────────┐   │
-│  │  Game shell (bundled in the app, owned by arcade-pro)               │   │
+│  │  Game shell (bundled in the app, owned by arcade-pro-client)        │   │
 │  │   1. fetch  <build>/arcadepro.json   (GameManifest)                 │   │
 │  │   2. import <build>/game.js          (ES module from Storage)       │   │
 │  │   3. game.mount(container, { assetBaseUrl, mode: "platform" })      │   │
@@ -203,6 +207,21 @@ single-use and bound to the player.
 - Prize competitions in app stores have their own rules (Apple 5.3, Google Play real-money and
   contest policies). **Check these before submitting the app.** This is an open item (§10).
 
+### 5.5 What the platform adds around a run (`arcade-pro-client`, `PLATFORM_PLAN.md` P7)
+
+- **Eligibility first:** the player must be signed in, have completed registration (18+, England,
+  Scotland or Wales, terms accepted; stored in `player_private`), and not be self-excluded.
+  `start_run` enforces this server-side (B1).
+- **Ad on entry:** after `start_run` succeeds and before the game loads, the platform shows one
+  labelled ad (`AdGate`). Ad failure never blocks play, because entry is always free.
+- **The game shell is self-contained** (script inlined into `game-shell.html`), so the sandboxed,
+  opaque-origin iframe never has to fetch app-hosted scripts. It carries a strict CSP that only
+  allows Supabase Storage.
+- **The `runToken` never enters the iframe:** the platform sends `start` with `runToken: ""` and
+  submits to `submit-run` itself.
+- The platform shows its own "Tap to start" overlay after `ready`, so the run clock starts only
+  when the player is ready.
+
 ---
 
 ## 6. Run lifecycle (anti-cheat)
@@ -305,6 +324,10 @@ The browser and the server run the **same core**, so they must agree bit-for-bit
 | 2026-10-25 | Use `game-client-template` (not memory-match) as the base for all games; Stub Tapper is its built-in example |
 | 2026-10-25 | Hosting **option B**: a game shell bundled in the app loads ES-module builds from Storage |
 | 2026-10-25 | Leaked-password protection skipped (needs a paid plan) |
+| 2026-10-26 | Platform = existing repo `simba-io/arcade-pro-client`, refactored (not a fresh repo) |
+| 2026-10-26 | Paid entry removed: no entry fee, paywall, unlocks, tokens or wallet (business plan: always free) |
+| 2026-10-26 | Weekly drop: **Tuesday 12:00 Europe/London**; times come from `competitions.ends_at` / `entries_close_at` |
+| 2026-10-26 | Platform game shell is self-contained (inline script + CSP); `runToken` is never sent into the iframe |
 
 ---
 
@@ -313,10 +336,16 @@ The browser and the server run the **same core**, so they must agree bit-for-bit
 - **SDK distribution:** currently a private git dependency
   (`github:simba-io/arcadepro-game-sdk#vX.Y.Z`, which needs the SDK's `prepare` script; see the
   template plan, Phase 0). CI will need a GitHub token with read access. Revisit public npm later.
-- **Platform app technology:** React + PixiJS confirmed. The mobile wrapper (e.g. Capacitor vs
-  React Native + WebView) is **not decided yet**. The shell + iframe design works with both.
+- **Platform app:** `arcade-pro-client` (React 19 + Vite, GitHub Pages). The native mobile wrapper
+  (e.g. Capacitor) is **not decided yet**; the shell + iframe design works with it.
+- **Backend for the platform** (`PLATFORM_PLAN.md` B1–B3): `player_private` + registration and
+  self-exclusion RPCs, entry cut-off, the `game_catalogue` view with sponsor fields and a £10 minimum
+  prize, and a weekly scheduler (pg_cron) for the Tuesday 12:00 drop.
+- **Ad provider and consent platform** (e.g. H5 Games Ads on web, AdMob in a native app) and whether
+  the ad is shown per run or per session.
+- **Stripe secret key** was committed in `arcade-pro-client`: it must be rolled (Cameron).
 - **Custom SMTP** for auth emails (Resend / Postmark / SendGrid) and auth Site URL / redirect URLs.
-- **Competition scheduling:** a weekly job to create, open, close and settle competitions (pg_cron).
+- **Competition scheduling:** a weekly job to create, open, close and settle competitions (pg_cron), specified as B3 in `arcade-pro-client/PLATFORM_PLAN.md`.
 - **Flagged-run review tool** and winner selection.
 - **Payouts:** Stripe (test mode first), age and identity checks before paying a prize, and
   confirmation from Stripe that skill-competition cash prizes are allowed.
