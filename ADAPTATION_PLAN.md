@@ -618,8 +618,8 @@ token that can read the private SDK repo and write to the backend repo. Plan wit
 
 ## Progress
 
-- [ ] Phase 0: SDK v0.2.0
-- [ ] Phase 1: housekeeping and tooling
+- [x] Phase 0: SDK v0.2.0. Deviations: determinism test ported to vitest (tsx dropped); `Transport` declared in root `manifest.ts` and re-exported from `/client`; `verifySubmission` takes an optional 4th arg `personalBest` (sets `isPersonalBest`); `RunDriver.pause()` also ignores inputs (`InputRecorder.suspend()`/`unsuspend()`, `RunDriver.paused`).
+- [x] Phase 1: housekeeping and tooling. Deviations: one tsconfig with `"types": ["vite/client"]` (Node types installed but not listed, so they can't leak into `src/core`; add a Node-only config when scripts/configs need them); vitest settings (`passWithNoTests`) live in a separate `vitest.config.ts` so Phase 6 can rewrite `vite.config.ts` freely.
 - [ ] Phase 2: SDK dependency and game identity
 - [ ] Phase 3: headless core and purity lint
 - [ ] Phase 4: core tests
