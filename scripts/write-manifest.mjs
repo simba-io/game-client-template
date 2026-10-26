@@ -19,9 +19,12 @@ const fail = (message) => {
 };
 
 if (game.version !== pkg.version) {
-  fail(`game.config.json version ${game.version} != package.json version ${pkg.version}`);
+  fail(
+    `game.config.json version ${game.version} != package.json version ${pkg.version}`,
+  );
 }
-if (!existsSync(root + "dist/" + entry)) fail(`dist/${entry} not found; run vite build first`);
+if (!existsSync(root + "dist/" + entry))
+  fail(`dist/${entry} not found; run vite build first`);
 
 const manifest = {
   manifestVersion: 1,
@@ -34,7 +37,13 @@ const manifest = {
   designHeight: game.designHeight,
   builtAt: new Date().toISOString(),
 };
-if (!isGameManifest(manifest)) fail(`invalid manifest: ${JSON.stringify(manifest)}`);
+if (!isGameManifest(manifest))
+  fail(`invalid manifest: ${JSON.stringify(manifest)}`);
 
-writeFileSync(root + "dist/" + MANIFEST_FILENAME, JSON.stringify(manifest, null, 2) + "\n");
-console.log(`write-manifest: dist/${MANIFEST_FILENAME} → ${manifest.gameId}@${manifest.gameVersion} (sdk ${manifest.sdkVersion})`);
+writeFileSync(
+  root + "dist/" + MANIFEST_FILENAME,
+  JSON.stringify(manifest, null, 2) + "\n",
+);
+console.log(
+  `write-manifest: dist/${MANIFEST_FILENAME} → ${manifest.gameId}@${manifest.gameVersion} (sdk ${manifest.sdkVersion})`,
+);
