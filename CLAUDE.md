@@ -46,7 +46,8 @@ the `submit-run` validator, so **its rules must stay exactly as specified** in
 
 ```
 src/
-  game.config.ts        single source of game identity: id, version, title, orientation, design size
+  game.config.json      single source of game identity: id, version, title, orientation, design size
+  game.config.ts        typed GAME constant read from game.config.json
   core/                 HEADLESS RULES. Implements GameCore. Runs in browser AND on the server.
     index.ts            default export: GameCoreModule { core, plausibility }
     rules.ts            the actual game logic
@@ -128,12 +129,17 @@ npm run release      # dry run: shows what would be uploaded/copied (see Phase 8
   (not `_staging`), or changing the database.
 - Adding a new runtime dependency to the game bundle.
 
-## Creating a new game from this template (after the plan is complete)
+## Creating a new game from this template
+
+Same checklist as `README.md` (keep the two in sync):
 
 1. GitHub → `simba-io/game-client-template` → **Use this template** → `simba-io/<game-id>-client`.
-2. `src/game.config.ts`: set `id` (slug `^[a-z0-9-]{2,40}$`), `title`, `version: "0.1.0"`, orientation, design size.
-   Set `package.json` `name`/`version` to match.
-3. Replace `src/core/rules.ts` with the new rules. Update `core.actions`, `tickRate`, `maxTicks` and `plausibility`.
-4. Replace the golden test values (seed + inputs → expected score) for the new game.
-5. Replace the scenes and assets in `src/client/` and `public/assets/`.
-6. `npm test && npm run build && npm run build:core && npm run harness`, then release (ARCHITECTURE §8).
+2. `src/game.config.json`: set `id` (slug `^[a-z0-9-]{2,40}$`), `title`, `version: "0.1.0"`, orientation,
+   design size, background. Set `package.json` `name`/`version` and the `index.html` `<title>` to match.
+3. Replace `src/core/rules.ts`. Set the core's `gameId`/`version` to match `game.config.json` (the
+   config test checks), and `core.actions`, `tickRate`, `maxTicks` and `plausibility`.
+4. Replace the golden values (seed + inputs → expected score) in `test/core.golden.test.ts`,
+   `test/bundle.test.ts` and `test/verify.test.ts`; adapt `test/core.determinism.test.ts`.
+5. Replace the scenes (`src/client/scenes/`), recorded actions (`src/client/input.ts`), asset list
+   (`src/client/App.ts`) and `public/assets/`.
+6. `npm test && npm run build && npm run build:core && npm run harness`, then release (README, ARCHITECTURE §8).

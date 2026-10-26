@@ -1,4 +1,4 @@
-// Fake platform for the harness (the real one is arcade-pro). Hosts the
+// Fake platform for the harness (the real one is arcade-pro-client). Hosts the
 // reference shell in <iframe sandbox="allow-scripts"> — no allow-same-origin —
 // and plays the platform side of the SDK protocol over real postMessage.
 // Runs are issued and judged locally by the SDK's StandaloneHost, i.e. with

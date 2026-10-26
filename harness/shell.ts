@@ -1,5 +1,6 @@
 // Reference copy of the platform's game shell (docs/ARCHITECTURE.md §5.1).
-// The real one lives in arcade-pro. Runs inside <iframe sandbox="allow-scripts">,
+// The real one lives in arcade-pro-client (built self-contained, with its script
+// inlined and a strict CSP: ARCHITECTURE §5.5). Runs inside <iframe sandbox="allow-scripts">,
 // so it has an opaque origin and can't touch the app's storage or session.
 //
 //   parent → shell  { type: "shell:load", manifestUrl, gameId, gameVersion }
