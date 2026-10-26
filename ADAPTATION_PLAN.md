@@ -623,7 +623,7 @@ token that can read the private SDK repo and write to the backend repo. Plan wit
 - [x] Phase 2: SDK dependency and game identity. Added `test/sdk.test.ts` to prove both SDK entry points resolve with types.
 - [x] Phase 3: headless core and purity lint. Core keeps literal id/version (CLAUDE.md limits core imports to the SDK and `src/core`), guarded by the config test; dropped the spec's unused `GameCoreModule` import from `rules.ts` (fails `noUnusedLocals`). Purity rules proven with a probe file (11/11 violations caught) and `Math.random()` in `rules.ts`.
 - [x] Phase 4: core tests. Golden values match exactly. `Object.freeze` can't protect a `Set`, so the step-purity test also snapshots `bonus` before/after each step.
-- [ ] Phase 5: client and standalone dev
+- [x] Phase 5: client and standalone dev. Deviations: "Play again" (standalone only) fires a DOM `arcadepro:play-again` event on the container that the dev host answers with `startRun()` (the protocol has no "request a run" message); Space ignores auto-repeat per 5.3, so the >20/s flag was checked by auto-clicking, not by holding Space; tab-switch pause verified by simulating `visibilitychange` (the in-app test browser doesn't hide background tabs), still needs a real-browser check. Verified in-browser: honest runs `verified` with replayed = on-screen score, pause excludes hidden time (36.0 s run, no `time_drift`), auto-click flagged `input_rate_too_high`, `?seed=` gives identical bonus ticks, mobile 375×812 layout + bonus flash seen.
 - [ ] Phase 6: build outputs
 - [ ] Phase 7: harness (7.2 local, 7.3 staging with Cameron)
 - [ ] Phase 8: release script

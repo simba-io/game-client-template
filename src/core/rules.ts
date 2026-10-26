@@ -35,3 +35,6 @@ export const core: GameCore<StubTapperState> = {
 };
 
 export const plausibility = { maxInputsPerSecond: 20, maxTimeDrift: 0.25 };
+
+/** Read-only helper for rendering: true if a tap right now scores double. */
+export const isBonusTick = (s: StubTapperState): boolean => s.bonus.has(s.tick);
