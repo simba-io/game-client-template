@@ -45,7 +45,7 @@ run and shows the verdict. `?seed=4051550508` fixes the seed.
 | `npm test` | Vitest: golden, determinism, verification, config and build-output checks |
 | `npm run build` | lint + typecheck + library build → `dist/` (`game.js`, `chunks/`, `assets/`, `arcadepro.json`) |
 | `npm run build:core` | The headless core as one file with no imports → `dist-core/core.js` |
-| `npm run harness` | Build, then serve the platform harness on :8081 (sandboxed iframe + reference shell) |
+| `npm run harness` | Build, then serve the platform harness on :8081 (sandboxed iframe + reference shell with the platform's CSP; violations log as `[csp]` in the console) |
 | `npm run release` | Release script, **dry run by default** (see [Releasing](#releasing)) |
 
 ## Layout
@@ -77,7 +77,8 @@ scripts/             write-manifest.mjs, release.mjs
    `test/core.determinism.test.ts` to the new actions and game id.
 5. **Client:** replace the scenes in `src/client/scenes/`, the actions recorded in
    `src/client/input.ts`, the asset list in `src/client/App.ts` and the files in `public/assets/`.
-   Load assets only relative to `ctx.assetBaseUrl`, never from `/assets/...`.
+   Load assets only relative to `ctx.assetBaseUrl`, never from `/assets/...`. Keep
+   `import "pixi.js/unsafe-eval"` first in `src/client/entry.ts`: the platform's CSP has no `'unsafe-eval'`.
 6. **Check:** `npm test && npm run build && npm run build:core && npm run harness`, and play a run in
    the harness. Then release (below).
 

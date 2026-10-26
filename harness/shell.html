@@ -6,6 +6,24 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
+    <!--
+      The platform shell's CSP (arcade-pro-client PLATFORM_PLAN.md §7.1), with
+      %VITE_SUPABASE_URL% = the real Supabase project (for _staging builds) plus
+      this harness server (the shell's own script and the local /build/).
+      ws://localhost:8081 is only for Vite's dev client; it is NOT in the platform policy.
+      No 'unsafe-eval': games must not need it (see src/client/entry.ts).
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none';
+        script-src 'unsafe-inline' http://localhost:8081 https://dvocvpbnquklcfbbbrfi.supabase.co;
+        connect-src http://localhost:8081 https://dvocvpbnquklcfbbbrfi.supabase.co ws://localhost:8081;
+        img-src http://localhost:8081 https://dvocvpbnquklcfbbbrfi.supabase.co data: blob:;
+        media-src http://localhost:8081 https://dvocvpbnquklcfbbbrfi.supabase.co blob:;
+        font-src http://localhost:8081 https://dvocvpbnquklcfbbbrfi.supabase.co data:;
+        style-src 'unsafe-inline';
+        worker-src blob:"
+    />
     <title>ArcadePro game shell (reference)</title>
     <style>
       html,

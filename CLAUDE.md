@@ -98,6 +98,11 @@ docs/ARCHITECTURE.md
   no native APIs (app-store rule, see ARCHITECTURE §5.4).
 - Mobile first: portrait 1920×3000 design resolution, `touch-action: none` on the canvas,
   cap renderer resolution at 2× for performance.
+- **The platform's game shell has a strict CSP with no `'unsafe-eval'`** (ARCHITECTURE §5.5).
+  Keep `import "pixi.js/unsafe-eval"` as the first import in `src/client/entry.ts` (a test checks), and
+  don't add code or libraries that need `eval`/`new Function`, inline workers from other origins, or
+  network access beyond the build's own files. `npm run harness` applies the same CSP and logs any
+  violation as `[csp] blocked …` in the console.
 
 ### General
 - Keep `npm run lint`, `npm run typecheck`, `npm test` and `npm run build` green on every commit.

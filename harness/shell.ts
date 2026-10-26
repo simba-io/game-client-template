@@ -27,6 +27,14 @@ const isShellLoad = (x: unknown): x is ShellLoad => {
   );
 };
 
+// Make CSP violations visible: some are caught by libraries and never reach
+// the console on their own (e.g. Pixi's eval probe).
+document.addEventListener("securitypolicyviolation", (e) => {
+  console.warn(
+    `[csp] blocked ${e.effectiveDirective}: ${e.blockedURI || "(inline/eval)"} at ${e.sourceFile}:${e.lineNumber}`,
+  );
+});
+
 let loading = false;
 
 window.addEventListener("message", (event) => {
