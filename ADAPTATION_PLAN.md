@@ -622,7 +622,7 @@ token that can read the private SDK repo and write to the backend repo. Plan wit
 - [x] Phase 1: housekeeping and tooling. Deviations: one tsconfig with `"types": ["vite/client"]` (Node types installed but not listed, so they can't leak into `src/core`; add a Node-only config when scripts/configs need them); vitest settings (`passWithNoTests`) live in a separate `vitest.config.ts` so Phase 6 can rewrite `vite.config.ts` freely.
 - [x] Phase 2: SDK dependency and game identity. Added `test/sdk.test.ts` to prove both SDK entry points resolve with types.
 - [x] Phase 3: headless core and purity lint. Core keeps literal id/version (CLAUDE.md limits core imports to the SDK and `src/core`), guarded by the config test; dropped the spec's unused `GameCoreModule` import from `rules.ts` (fails `noUnusedLocals`). Purity rules proven with a probe file (11/11 violations caught) and `Math.random()` in `rules.ts`.
-- [ ] Phase 4: core tests
+- [x] Phase 4: core tests. Golden values match exactly. `Object.freeze` can't protect a `Set`, so the step-purity test also snapshots `bonus` before/after each step.
 - [ ] Phase 5: client and standalone dev
 - [ ] Phase 6: build outputs
 - [ ] Phase 7: harness (7.2 local, 7.3 staging with Cameron)
