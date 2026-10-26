@@ -1,0 +1,8 @@
+{
+  // Tests and build configs: same strict settings, plus Node types.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["node", "vite/client"]
+  },
+  "include": ["test", "vite*.config.ts"]
+}

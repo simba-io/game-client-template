@@ -110,7 +110,7 @@ docs/ARCHITECTURE.md
 npm install
 npm run dev          # standalone play with fake platform + local replay verdicts
 npm run lint         # eslint (includes core purity rules)
-npm run typecheck    # tsc --noEmit
+npm run typecheck    # tsc: src (browser types), then tests + build configs (tsconfig.node.json)
 npm test             # vitest run
 npm run build        # lint + typecheck + vite lib build + manifest → dist/
 npm run build:core   # headless core bundle → dist-core/core.js

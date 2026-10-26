@@ -1,0 +1,9 @@
+{
+  "id": "stub-tapper",
+  "version": "0.0.1",
+  "title": "Stub Tapper",
+  "orientation": "portrait",
+  "designWidth": 1920,
+  "designHeight": 3000,
+  "background": "#1099bb"
+}
